@@ -3,6 +3,7 @@ import random
 import subprocess
 import datetime
 from dotenv import load_dotenv
+import time
 
 # Load environment variables from .env file
 load_dotenv()
@@ -50,25 +51,27 @@ FILE_NAMES = [
     "app.js"
 ]
 
-def make_commit():
-    # Choose a random file to modify for more natural commits
-    file_name = random.choice(FILE_NAMES)
-    file_path = os.path.join(REPO_PATH, file_name)
-    
-    # Create the file if it doesn't exist
-    os.makedirs(REPO_PATH, exist_ok=True)
-    with open(file_path, "a") as f:
-        f.write(f"Update on {datetime.datetime.now()}\n")
-    
-    # Set the remote URL with the PAT
-    subprocess.run(["git", "-C", REPO_PATH, "remote", "set-url", "origin", REPO_URL])
+def make_commit(batch_size=10):
+    for _ in range(batch_size):
+        # Choose a random file to modify for more natural commits
+        file_name = random.choice(FILE_NAMES)
+        file_path = os.path.join(REPO_PATH, file_name)
 
-    # Add, commit, and push
-    subprocess.run(["git", "-C", REPO_PATH, "add", "."])
-    commit_message = random.choice(COMMIT_MESSAGES)
-    subprocess.run(["git", "-C", REPO_PATH, "commit", "-m", commit_message])
+        # Create the file if it doesn't exist
+        os.makedirs(REPO_PATH, exist_ok=True)
+        with open(file_path, "a") as f:
+            f.write(f"Update on {datetime.datetime.now()}\n")
+
+        # Set the remote URL with the PAT
+        subprocess.run(["git", "-C", REPO_PATH, "remote", "set-url", "origin", REPO_URL])
+
+        # Add, commit, and push
+        subprocess.run(["git", "-C", REPO_PATH, "add", "."])
+        commit_message = random.choice(COMMIT_MESSAGES)
+        subprocess.run(["git", "-C", REPO_PATH, "commit", "-m", commit_message])
+        time.sleep(random.randint(1, 5))  # Add a small random delay to avoid looking too robotic
     subprocess.run(["git", "-C", REPO_PATH, "push"])
 
 if __name__ == "__main__":
-    make_commit()
-    print("Commit pushed successfully!")
+    make_commit(batch_size=50)  # Increase the batch size for more green
+    print("Commit batch pushed successfully!")
