@@ -73,6 +73,6 @@ def make_commit(batch_size=10):
     subprocess.run(["git", "-C", REPO_PATH, "push"])
 
 if __name__ == "__main__":
-    randinteger = random.randint(100,200)
+    print(randinteger = random.randint(1,2))
     make_commit(batch_size=randinteger)  # Increase the batch size for more green
     print("Commit batch pushed successfully!")
